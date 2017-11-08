@@ -23,6 +23,7 @@ public class DsApplication extends Application {
     private static DsApplication app;
     private static Context appContext;
     private TIMUserProfile mSelfProfile;
+    private ILVLiveConfig mLiveConfig;
 
     @Override
     public void onCreate() {
@@ -47,7 +48,8 @@ public class DsApplication extends Application {
         TIMManager.getInstance().initFriendshipSettings(CustomProfile.allBaseInfo, customInfos);*/
 
         //初始化腾讯互动直播 直播SDK
-        ILVLiveManager.getInstance().init(new ILVLiveConfig());
+        mLiveConfig = new ILVLiveConfig();
+        ILVLiveManager.getInstance().init(mLiveConfig);
 
         //七牛云
         QnUploadHelper.init(
@@ -72,5 +74,9 @@ public class DsApplication extends Application {
 
     public TIMUserProfile getSelfProfile() {
         return mSelfProfile;
+    }
+
+    public ILVLiveConfig getLiveConfig() {
+        return mLiveConfig;
     }
 }

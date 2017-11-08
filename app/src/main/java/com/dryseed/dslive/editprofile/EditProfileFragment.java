@@ -133,7 +133,6 @@ public class EditProfileFragment extends Fragment {
 
     private void findAllViews(View view) {
         mTitlebar = (Toolbar) view.findViewById(R.id.title_bar);
-
         mAvatarView = view.findViewById(R.id.avatar);
         mAvatarImg = (ImageView) view.findViewById(R.id.avatar_img);
         mNickNameEdt = (ProfileEdit) view.findViewById(R.id.nick_name);
@@ -141,12 +140,10 @@ public class EditProfileFragment extends Fragment {
         mSignEdt = (ProfileEdit) view.findViewById(R.id.sign);
         mRenzhengEdt = (ProfileEdit) view.findViewById(R.id.renzheng);
         mLocationEdt = (ProfileEdit) view.findViewById(R.id.location);
-
         mIdView = (ProfileTextView) view.findViewById(R.id.id);
         mLevelView = (ProfileTextView) view.findViewById(R.id.level);
         mGetNumsView = (ProfileTextView) view.findViewById(R.id.get_nums);
         mSendNumsView = (ProfileTextView) view.findViewById(R.id.send_nums);
-
         mCompleteBtn = (Button) view.findViewById(R.id.complete);
     }
 

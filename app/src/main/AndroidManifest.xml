@@ -24,6 +24,11 @@
         <activity android:name=".register.RegisterActivity" />
         <activity android:name=".main.MainActivity" />
         <activity android:name=".editprofile.EditProfileActivity" />
+        <activity android:name=".createroom.CreateLiveActivity" />
+        <activity
+            android:name=".hostlive.HostLiveActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".watcher.WatcherActivity" />
 
     </application>
 

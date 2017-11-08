@@ -1,8 +1,10 @@
-package com.dryseed.dslive.utils.request;
+package com.dryseed.dslive.utils.net;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+
+import com.google.gson.Gson;
 
 import java.io.IOException;
 
@@ -13,7 +15,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- *  Created by caiminming on 2017/11/7.
+ * Created by caiminming on 2017/11/7.
  */
 public abstract class BaseRequest {
 
@@ -21,6 +23,7 @@ public abstract class BaseRequest {
     protected final int WHAT_SUCC = 1;
 
     private final static OkHttpClient okClient = new OkHttpClient();
+    protected final static Gson gson = new Gson();
 
     public interface OnResultListener<T> {
         void onFail(int code, String msg);

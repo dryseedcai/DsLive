@@ -13,6 +13,7 @@ import android.widget.TabHost;
 import com.dryseed.dslive.R;
 import com.dryseed.dslive.createroom.CreateLiveActivity;
 import com.dryseed.dslive.editprofile.EditProfileFragment;
+import com.dryseed.dslive.hostlive.HostLiveActivity;
 import com.dryseed.dslive.livelist.LiveListFragment;
 
 /**

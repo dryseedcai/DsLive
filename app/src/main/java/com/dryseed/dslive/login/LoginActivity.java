@@ -70,8 +70,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
-        final String accountStr = "dryseedcai123"; //mAccountEdt.getText().toString();
-        String passwordStr = "dryseedcai123"; //mPasswordEdt.getText().toString();
+//        final String accountStr = "dryseedcai123"; //mAccountEdt.getText().toString();
+//        String passwordStr = "dryseedcai123"; //mPasswordEdt.getText().toString();
+        final String accountStr = "dryseedcai321"; //mAccountEdt.getText().toString();
+        String passwordStr = "dryseedcai321"; //mPasswordEdt.getText().toString();
 
         //调用腾讯IM登录
         ILiveLoginManager.getInstance().tlsLogin(accountStr, passwordStr, new ILiveCallBack<String>() {
