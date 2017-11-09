@@ -38,13 +38,15 @@ public class BottomControlView extends RelativeLayout {
     }
 
     public void setIsHost(boolean isHost) {
-        if (isHost) {
+        /*if (isHost) {
             giftView.setVisibility(INVISIBLE);
             optionView.setVisibility(VISIBLE);
         } else {
             optionView.setVisibility(INVISIBLE);
             giftView.setVisibility(VISIBLE);
-        }
+        }*/
+        giftView.setVisibility(VISIBLE);
+        optionView.setVisibility(INVISIBLE);
     }
 
     private void findAllViews() {

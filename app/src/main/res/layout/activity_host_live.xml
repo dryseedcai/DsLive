@@ -59,11 +59,11 @@
         <!--android:layout_height="wrap_content"-->
         <!--android:layout_above="@id/chat_list_view" />-->
 
-    <!--<tyrantgit.widget.HeartLayout-->
-        <!--android:id="@+id/heart_layout"-->
-        <!--android:layout_width="100dp"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_alignParentRight="true" />-->
+    <tyrantgit.widget.HeartLayout
+        android:id="@+id/heart_layout"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true" />
 
     <com.dryseed.dslive.view.DanmuView
         android:id="@+id/danmu_view"
@@ -71,14 +71,14 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/chat_list_view" />
 
-    <!--<imooc.com.bearlive.view.GiftRepeatView-->
-        <!--android:id="@+id/gift_repeat_view"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_above="@id/chat_list_view" />-->
+    <com.dryseed.dslive.view.GiftRepeatView
+        android:id="@+id/gift_repeat_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_above="@id/chat_list_view" />
 
-    <!--<imooc.com.bearlive.view.GiftFullView-->
-        <!--android:id="@+id/gift_full_view"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
+    <com.dryseed.dslive.view.GiftFullView
+        android:id="@+id/gift_full_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </com.dryseed.dslive.widget.SizeChangeRelativeLayout>

@@ -11,6 +11,7 @@
     <item
         android:drawable="@drawable/porche_f3"
         android:duration="50" />
+
     <item
         android:drawable="@drawable/porche_f4"
         android:duration="50" />

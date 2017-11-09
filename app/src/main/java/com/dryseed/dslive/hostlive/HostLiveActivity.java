@@ -1,7 +1,8 @@
 package com.dryseed.dslive.hostlive;
 
+import android.graphics.Color;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -11,10 +12,15 @@ import com.dryseed.dslive.DsApplication;
 import com.dryseed.dslive.R;
 import com.dryseed.dslive.model.ChatMsgInfo;
 import com.dryseed.dslive.model.Constants;
+import com.dryseed.dslive.model.GiftCmdInfo;
+import com.dryseed.dslive.model.GiftInfo;
 import com.dryseed.dslive.view.BottomControlView;
 import com.dryseed.dslive.view.ChatMsgListView;
 import com.dryseed.dslive.view.ChatView;
 import com.dryseed.dslive.view.DanmuView;
+import com.dryseed.dslive.view.GiftFullView;
+import com.dryseed.dslive.view.GiftRepeatView;
+import com.dryseed.dslive.widget.GiftSelectDialog;
 import com.dryseed.dslive.widget.SizeChangeRelativeLayout;
 import com.google.gson.Gson;
 import com.tencent.TIMMessage;
@@ -22,19 +28,22 @@ import com.tencent.TIMUserProfile;
 import com.tencent.av.sdk.AVRoomMulti;
 import com.tencent.ilivesdk.ILiveCallBack;
 import com.tencent.ilivesdk.ILiveConstants;
-import com.tencent.ilivesdk.core.ILiveLog;
 import com.tencent.ilivesdk.core.ILiveLoginManager;
 import com.tencent.ilivesdk.core.ILiveRoomManager;
 import com.tencent.ilivesdk.view.AVRootView;
 import com.tencent.livesdk.ILVCustomCmd;
 import com.tencent.livesdk.ILVLiveConfig;
-import com.tencent.livesdk.ILVLiveConstants;
 import com.tencent.livesdk.ILVLiveManager;
 import com.tencent.livesdk.ILVLiveRoomOption;
 import com.tencent.livesdk.ILVText;
 
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import tyrantgit.widget.HeartLayout;
 
 /**
  * Created by caiminming on 2017/11/8.
@@ -59,7 +68,17 @@ public class HostLiveActivity extends AppCompatActivity {
     @BindView(R.id.danmu_view)
     DanmuView mDanmuView;
 
+    @BindView(R.id.gift_repeat_view)
+    GiftRepeatView mGiftRepeatView;
+
+    @BindView(R.id.gift_full_view)
+    GiftFullView mGiftFullView;
+
+    @BindView(R.id.heart_layout)
+    HeartLayout mHeartLayout;
+
     private int mRoomId;
+    private GiftSelectDialog giftSelectDialog;
 
 
     @Override
@@ -101,13 +120,52 @@ public class HostLiveActivity extends AppCompatActivity {
 
             @Override
             public void onCloseClick() {
-                // 点击了关闭按钮，关闭直播
+                //点击了关闭按钮，关闭直播
                 quitLive();
             }
 
             @Override
             public void onGiftClick() {
-                //主播界面，不能发送礼物
+                //发送礼物
+                //显示礼物九宫格
+                if (giftSelectDialog == null) {
+                    giftSelectDialog = new GiftSelectDialog(HostLiveActivity.this);
+
+                    giftSelectDialog.setGiftSendListener(new GiftSelectDialog.OnGiftSendListener() {
+                        @Override
+                        public void onGiftSendClick(final ILVCustomCmd customCmd) {
+                            customCmd.setDestId(ILiveRoomManager.getInstance().getIMGroupId());
+
+                            ILVLiveManager.getInstance().sendCustomCmd(customCmd, new ILiveCallBack<TIMMessage>() {
+                                @Override
+                                public void onSuccess(TIMMessage data) {
+                                    if (customCmd.getCmd() == Constants.CMD_CHAT_GIFT) {
+                                        //界面显示礼物动画。
+                                        GiftCmdInfo giftCmdInfo = new Gson().fromJson(customCmd.getParam(), GiftCmdInfo.class);
+                                        int giftId = giftCmdInfo.giftId;
+                                        String repeatId = giftCmdInfo.repeatId;
+                                        GiftInfo giftInfo = GiftInfo.getGiftById(giftId);
+                                        if (giftInfo == null) {
+                                            return;
+                                        }
+                                        if (giftInfo.type == GiftInfo.Type.ContinueGift) {
+                                            mGiftRepeatView.showGift(giftInfo, repeatId, DsApplication.getApplication().getSelfProfile());
+                                        } else if (giftInfo.type == GiftInfo.Type.FullScreenGift) {
+                                            //全屏礼物
+                                            mGiftFullView.showGift(giftInfo, DsApplication.getApplication().getSelfProfile());
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onError(String module, int errCode, String errMsg) {
+                                }
+
+                            });
+                        }
+                    });
+                }
+                giftSelectDialog.show();
             }
 
             @Override
@@ -218,7 +276,7 @@ public class HostLiveActivity extends AppCompatActivity {
                     }
                     ChatMsgInfo danmuInfo = ChatMsgInfo.createDanmuInfo(content, id, userProfile.getFaceUrl(), name);
                     mDanmuView.addMsgInfo(danmuInfo);
-                } /*else if (cmd.getCmd() == Constants.CMD_CHAT_GIFT) {
+                } else if (cmd.getCmd() == Constants.CMD_CHAT_GIFT) {
                     //界面显示礼物动画。
                     GiftCmdInfo giftCmdInfo = new Gson().fromJson(cmd.getParam(), GiftCmdInfo.class);
                     int giftId = giftCmdInfo.giftId;
@@ -228,12 +286,12 @@ public class HostLiveActivity extends AppCompatActivity {
                         return;
                     }
                     if (giftInfo.type == GiftInfo.Type.ContinueGift) {
-                        giftRepeatView.showGift(giftInfo, repeatId, userProfile);
+                        mGiftRepeatView.showGift(giftInfo, repeatId, userProfile);
                     } else if (giftInfo.type == GiftInfo.Type.FullScreenGift) {
                         //全屏礼物
-                        giftFullView.showGift(giftInfo, userProfile);
+                        mGiftFullView.showGift(giftInfo, userProfile);
                     }
-                } else if (cmd.getCmd() == ILVLiveConstants.ILVLIVE_CMD_ENTER) {
+                } /*else if (cmd.getCmd() == ILVLiveConstants.ILVLIVE_CMD_ENTER) {
                     //用户进入直播
                     mTitleView.addWatcher(userProfile);
                     mVipEnterView.showVipEnter(userProfile);
@@ -264,6 +322,7 @@ public class HostLiveActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Object data) {
                 Toast.makeText(HostLiveActivity.this, "创建直播成功！", Toast.LENGTH_SHORT).show();
+                test(); //开启测试
             }
 
             @Override
@@ -288,6 +347,14 @@ public class HostLiveActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(null != mHeartTimer){
+            mHeartTimer.cancel();
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         quitLive();
     }
@@ -306,5 +373,48 @@ public class HostLiveActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private Timer mHeartTimer = new Timer();
+    private Random mHeartRandom = new Random();
+
+    private void startHeartAnim() {
+        mHeartTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                mHeartLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mHeartLayout.addHeart(getRandomColor());
+                    }
+                });
+            }
+        }, 0, 1000); //1秒钟
+    }
+
+    private int getRandomColor() {
+        return Color.rgb(mHeartRandom.nextInt(255), mHeartRandom.nextInt(255), mHeartRandom.nextInt(255));
+    }
+
+    /**
+     * 测试代码
+     */
+    private void test() {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 7; i++) {
+                    ChatMsgInfo danmuInfo = ChatMsgInfo.createDanmuInfo(
+                            "danmu" + i,
+                            i + "",
+                            "http://att3.citysbs.com/no/chongqing/2017/11/08/13/193x160-133151_v2_16961510119111859_5630624050ee7e452afb4a72bae7dff8.png",
+                            i + "");
+                    mDanmuView.addMsgInfo(danmuInfo);
+                }
+            }
+        }, 2000);
+
+        startHeartAnim();
     }
 }
